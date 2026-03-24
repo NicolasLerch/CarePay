@@ -24,7 +24,7 @@ function requireEnv(name: string): string {
 }
 
 export const env = {
+  port: Number.parseInt(readEnv("PORT") ?? "3000", 10),
   tursoDatabaseUrl: requireEnv("TURSO_DATABASE_URL"),
   tursoAuthToken: readEnv("TURSO_AUTH_TOKEN"),
 };
-

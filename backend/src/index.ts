@@ -1,9 +1,18 @@
+import { createServer } from "./app/server.js";
 import { env } from "./config/env.js";
 import { getDbClient } from "./db/client.js";
 
-function bootstrap(): void {
+async function bootstrap(): Promise<void> {
   getDbClient();
-  console.log(`Backend base ready. Database URL configured: ${env.tursoDatabaseUrl}`);
+
+  const app = createServer();
+
+  app.listen(env.port, () => {
+    console.log(`Backend listening on port ${env.port}`);
+  });
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error("Error starting backend.", error);
+  process.exit(1);
+});

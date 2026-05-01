@@ -1,6 +1,11 @@
 import type { Request, Response } from "express";
 
 import {
+  sendListSuccess,
+  sendSuccess,
+} from "../../shared/http/responses.js";
+
+import {
   createHospitalBillingRuleSchema,
   hospitalBillingRuleHospitalParamsSchema,
   hospitalBillingRuleParamsSchema,
@@ -20,7 +25,7 @@ export async function listHospitalBillingRules(
   const billingRules =
     await hospitalBillingRulesService.listByHospital(hospitalId);
 
-  response.status(200).json({ data: billingRules });
+  return sendListSuccess(response, { data: billingRules });
 }
 
 export async function getHospitalBillingRule(
@@ -35,7 +40,7 @@ export async function getHospitalBillingRule(
     billingRuleId,
   );
 
-  response.status(200).json({ data: billingRule });
+  return sendSuccess(response, { data: billingRule });
 }
 
 export async function createHospitalBillingRule(
@@ -51,7 +56,7 @@ export async function createHospitalBillingRule(
     payload,
   );
 
-  response.status(201).json({ data: billingRule });
+  return sendSuccess(response, { statusCode: 201, data: billingRule });
 }
 
 export async function updateHospitalBillingRule(
@@ -68,7 +73,7 @@ export async function updateHospitalBillingRule(
     payload,
   );
 
-  response.status(200).json({ data: billingRule });
+  return sendSuccess(response, { data: billingRule });
 }
 
 export async function deleteHospitalBillingRule(
@@ -80,6 +85,5 @@ export async function deleteHospitalBillingRule(
   );
   await hospitalBillingRulesService.delete(hospitalId, billingRuleId);
 
-  response.status(204).send();
+  return sendSuccess(response, { data: null });
 }
-

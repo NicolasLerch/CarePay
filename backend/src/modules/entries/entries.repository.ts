@@ -8,8 +8,8 @@ type NewEntryRecord = typeof entries.$inferInsert;
 
 type EntryFilters = {
   hospitalId?: string;
-  dateFrom?: string;
-  dateTo?: string;
+  entryDateFrom?: string;
+  entryDateTo?: string;
 };
 
 export class EntriesRepository {
@@ -20,12 +20,12 @@ export class EntriesRepository {
       conditions.push(eq(entries.hospitalId, filters.hospitalId));
     }
 
-    if (filters.dateFrom) {
-      conditions.push(gte(entries.entryStartDate, filters.dateFrom));
+    if (filters.entryDateFrom) {
+      conditions.push(gte(entries.entryStartDate, filters.entryDateFrom));
     }
 
-    if (filters.dateTo) {
-      conditions.push(lte(entries.entryEndDate, filters.dateTo));
+    if (filters.entryDateTo) {
+      conditions.push(lte(entries.entryEndDate, filters.entryDateTo));
     }
 
     return db

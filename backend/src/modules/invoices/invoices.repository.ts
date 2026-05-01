@@ -9,8 +9,8 @@ type NewInvoiceRecord = typeof invoices.$inferInsert;
 type InvoiceFilters = {
   hospitalId?: string;
   status?: string;
-  dateFrom?: string;
-  dateTo?: string;
+  invoicePeriodFrom?: string;
+  invoicePeriodTo?: string;
 };
 
 export class InvoicesRepository {
@@ -25,12 +25,12 @@ export class InvoicesRepository {
       conditions.push(eq(invoices.status, filters.status));
     }
 
-    if (filters.dateFrom) {
-      conditions.push(gte(invoices.invoicePeriodStart, filters.dateFrom));
+    if (filters.invoicePeriodFrom) {
+      conditions.push(gte(invoices.invoicePeriodStart, filters.invoicePeriodFrom));
     }
 
-    if (filters.dateTo) {
-      conditions.push(lte(invoices.invoicePeriodEnd, filters.dateTo));
+    if (filters.invoicePeriodTo) {
+      conditions.push(lte(invoices.invoicePeriodEnd, filters.invoicePeriodTo));
     }
 
     return db

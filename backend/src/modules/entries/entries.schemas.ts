@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  amountSourceSchema,
+  entryInputTypeSchema,
+} from "../../shared/domain/enums.js";
+
 const isoDateTimeSchema = z.string().datetime({ offset: true });
 const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const decimalStringSchema = z.string().regex(/^\d+(\.\d+)?$/);
@@ -22,8 +27,8 @@ export const hospitalEntriesParamsSchema = z.object({
 
 export const listEntriesQuerySchema = z.object({
   hospitalId: z.uuid().optional(),
-  dateFrom: isoDateSchema.optional(),
-  dateTo: isoDateSchema.optional(),
+  entryDateFrom: isoDateSchema.optional(),
+  entryDateTo: isoDateSchema.optional(),
 });
 
 export const createEntrySchema = z.object({
@@ -31,13 +36,13 @@ export const createEntrySchema = z.object({
   invoiceId: z.uuid().optional(),
   entryStartDate: isoDateTimeSchema,
   entryEndDate: isoDateTimeSchema,
-  inputType: z.string().trim().min(1).max(50),
+  inputType: entryInputTypeSchema,
   hoursWorked: z.preprocess(
     emptyStringToUndefined,
     decimalStringSchema.optional(),
   ),
   patientsAttended: z.number().int().nonnegative().optional(),
-  amountSource: z.string().trim().min(1).max(50),
+  amountSource: amountSourceSchema,
   finalAmount: z.preprocess(
     emptyStringToUndefined,
     decimalStringSchema.optional(),
@@ -57,13 +62,13 @@ export const updateEntrySchema = createEntrySchema
 export const calculateEntryAmountSchema = z.object({
   hospitalId: z.uuid(),
   entryStartDate: isoDateTimeSchema,
-  inputType: z.string().trim().min(1).max(50),
+  inputType: entryInputTypeSchema,
   hoursWorked: z.preprocess(
     emptyStringToUndefined,
     decimalStringSchema.optional(),
   ),
   patientsAttended: z.number().int().nonnegative().optional(),
-  amountSource: z.string().trim().min(1).max(50),
+  amountSource: amountSourceSchema,
   finalAmount: z.preprocess(
     emptyStringToUndefined,
     decimalStringSchema.optional(),

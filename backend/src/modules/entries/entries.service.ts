@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 
 import { AppError } from "../../app/errors/app-error.js";
+import {
+  amountSourceSchema,
+  entryInputTypeSchema,
+} from "../../shared/domain/enums.js";
 import { HospitalsService } from "../hospitals/hospitals.service.js";
 
 import type {
@@ -79,14 +83,16 @@ export class EntriesService {
     const nextEntryEndDate = input.entryEndDate ?? currentEntry.entryEndDate;
     this.ensureDateRange(nextEntryStartDate, nextEntryEndDate);
 
-    const nextInputType = input.inputType ?? currentEntry.inputType;
+    const nextInputType =
+      input.inputType ?? this.parseStoredInputType(currentEntry.inputType);
     const nextHoursWorked =
       input.hoursWorked !== undefined ? input.hoursWorked : currentEntry.hoursWorked ?? undefined;
     const nextPatientsAttended =
       input.patientsAttended !== undefined
         ? input.patientsAttended
         : currentEntry.patientsAttended ?? undefined;
-    const nextAmountSource = input.amountSource ?? currentEntry.amountSource;
+    const nextAmountSource =
+      input.amountSource ?? this.parseStoredAmountSource(currentEntry.amountSource);
     const nextFinalAmount =
       input.finalAmount !== undefined ? input.finalAmount : currentEntry.finalAmount;
 
@@ -134,5 +140,35 @@ export class EntriesService {
     if (entryEndDate < entryStartDate) {
       throw new AppError("entryEndDate must be on or after entryStartDate.", 400);
     }
+  }
+
+  private parseStoredInputType(inputType: string) {
+    const parsedInputType = entryInputTypeSchema.safeParse(inputType);
+
+    if (!parsedInputType.success) {
+      throw new AppError(
+        "Stored entry has an invalid inputType.",
+        500,
+        "INVALID_STORED_ENTRY_INPUT_TYPE",
+        { inputType },
+      );
+    }
+
+    return parsedInputType.data;
+  }
+
+  private parseStoredAmountSource(amountSource: string) {
+    const parsedAmountSource = amountSourceSchema.safeParse(amountSource);
+
+    if (!parsedAmountSource.success) {
+      throw new AppError(
+        "Stored entry has an invalid amountSource.",
+        500,
+        "INVALID_STORED_ENTRY_AMOUNT_SOURCE",
+        { amountSource },
+      );
+    }
+
+    return parsedAmountSource.data;
   }
 }

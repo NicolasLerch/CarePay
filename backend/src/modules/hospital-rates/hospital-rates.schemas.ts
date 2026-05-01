@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { hospitalRateBillingModeSchema } from "../../shared/domain/enums.js";
+
 const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const decimalStringSchema = z.string().regex(/^\d+(\.\d+)?$/);
 const emptyStringToUndefined = (value: unknown) => {
@@ -23,7 +25,7 @@ export const hospitalRateHospitalParamsSchema = z.object({
 export const createHospitalRateSchema = z.object({
   validFrom: isoDateSchema,
   validTo: isoDateSchema.optional(),
-  billingMode: z.string().trim().min(1).max(50),
+  billingMode: hospitalRateBillingModeSchema,
   shiftValue: z.preprocess(emptyStringToUndefined, decimalStringSchema.optional()),
   hourlyRate: z.preprocess(emptyStringToUndefined, decimalStringSchema.optional()),
   patientRate: z.preprocess(
@@ -45,4 +47,3 @@ export const updateHospitalRateSchema = createHospitalRateSchema
 
 export type CreateHospitalRateInput = z.infer<typeof createHospitalRateSchema>;
 export type UpdateHospitalRateInput = z.infer<typeof updateHospitalRateSchema>;
-

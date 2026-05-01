@@ -11,15 +11,26 @@ export function errorHandler(
 ): void {
   if (error instanceof ZodError) {
     response.status(400).json({
-      message: "Request validation failed.",
-      issues: error.issues,
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Request validation failed.",
+        details: {
+          issues: error.issues,
+        },
+      },
     });
     return;
   }
 
   if (error instanceof AppError) {
     response.status(error.statusCode).json({
-      message: error.message,
+      success: false,
+      error: {
+        code: error.code,
+        message: error.message,
+        details: error.details ?? {},
+      },
     });
     return;
   }
@@ -27,7 +38,11 @@ export function errorHandler(
   console.error(error);
 
   response.status(500).json({
-    message: "Internal server error.",
+    success: false,
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Internal server error.",
+      details: {},
+    },
   });
 }
-

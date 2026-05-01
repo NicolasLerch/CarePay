@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+import {
+  hospitalAlertTypeSchema,
+  offsetDirectionSchema,
+  timeUnitSchema,
+} from "../../shared/domain/enums.js";
+
 const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 export const hospitalAlertRuleParamsSchema = z.object({
@@ -14,10 +20,10 @@ export const hospitalAlertRuleHospitalParamsSchema = z.object({
 export const createHospitalAlertRuleSchema = z.object({
   validFrom: isoDateSchema,
   validTo: isoDateSchema.optional(),
-  alertType: z.string().trim().min(1).max(50),
-  triggerOffsetUnit: z.string().trim().min(1).max(50),
+  alertType: hospitalAlertTypeSchema,
+  triggerOffsetUnit: timeUnitSchema,
   triggerOffsetValue: z.number().int().nonnegative(),
-  triggerOffsetDirection: z.string().trim().min(1).max(50),
+  triggerOffsetDirection: offsetDirectionSchema,
   isActive: z.boolean().optional(),
 });
 
@@ -34,4 +40,3 @@ export type CreateHospitalAlertRuleInput = z.infer<
 export type UpdateHospitalAlertRuleInput = z.infer<
   typeof updateHospitalAlertRuleSchema
 >;
-

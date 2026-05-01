@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+import {
+  invoiceIssueAnchorSchema,
+  offsetDirectionSchema,
+  paymentBusinessDayPolicySchema,
+  paymentDateBasisSchema,
+  timeUnitSchema,
+} from "../../shared/domain/enums.js";
+
 const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const emptyStringToUndefined = (value: unknown) => {
   if (typeof value !== "string") {
@@ -26,17 +34,17 @@ export const createHospitalBillingRuleSchema = z.object({
   billingFrequencyInterval: z.number().int().positive(),
   invoiceIssueAnchor: z.preprocess(
     emptyStringToUndefined,
-    z.string().trim().max(50).optional(),
+    invoiceIssueAnchorSchema.optional(),
   ),
-  paymentDelayUnit: z.string().trim().min(1).max(50),
+  paymentDelayUnit: timeUnitSchema,
   paymentDelayValue: z.number().int().nonnegative(),
-  paymentDateBasis: z.string().trim().min(1).max(50),
-  paymentBusinessDayPolicy: z.string().trim().min(1).max(50),
+  paymentDateBasis: paymentDateBasisSchema,
+  paymentBusinessDayPolicy: paymentBusinessDayPolicySchema,
   paymentWindowStartDay: z.number().int().min(1).max(31).optional(),
   paymentWindowEndDay: z.number().int().min(1).max(31).optional(),
-  deadlineOffsetUnit: z.string().trim().min(1).max(50),
+  deadlineOffsetUnit: timeUnitSchema,
   deadlineOffsetValue: z.number().int().nonnegative(),
-  deadlineOffsetDirection: z.string().trim().min(1).max(50),
+  deadlineOffsetDirection: offsetDirectionSchema,
 });
 
 export const updateHospitalBillingRuleSchema = createHospitalBillingRuleSchema
@@ -52,4 +60,3 @@ export type CreateHospitalBillingRuleInput = z.infer<
 export type UpdateHospitalBillingRuleInput = z.infer<
   typeof updateHospitalBillingRuleSchema
 >;
-

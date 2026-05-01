@@ -1,6 +1,11 @@
 import type { Request, Response } from "express";
 
 import {
+  sendListSuccess,
+  sendSuccess,
+} from "../../shared/http/responses.js";
+
+import {
   alertParamsSchema,
   generateAlertsSchema,
   listAlertsQuerySchema,
@@ -14,21 +19,21 @@ export async function listAlerts(request: Request, response: Response) {
   const query = listAlertsQuerySchema.parse(request.query);
   const alerts = await alertsService.list(query);
 
-  response.status(200).json({ data: alerts });
+  return sendListSuccess(response, { data: alerts });
 }
 
 export async function getAlert(request: Request, response: Response) {
   const { alertId } = alertParamsSchema.parse(request.params);
   const alert = await alertsService.getById(alertId);
 
-  response.status(200).json({ data: alert });
+  return sendSuccess(response, { data: alert });
 }
 
 export async function generateAlerts(request: Request, response: Response) {
   const payload = generateAlertsSchema.parse(request.body);
   const alerts = await alertsService.generate(payload);
 
-  response.status(201).json({ data: alerts });
+  return sendListSuccess(response, { statusCode: 201, data: alerts });
 }
 
 export async function updateAlertStatus(
@@ -39,6 +44,5 @@ export async function updateAlertStatus(
   const payload = updateAlertStatusSchema.parse(request.body);
   const alert = await alertsService.updateStatus(alertId, payload);
 
-  response.status(200).json({ data: alert });
+  return sendSuccess(response, { data: alert });
 }
-

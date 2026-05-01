@@ -102,7 +102,7 @@ async function seedBillingRules(): Promise<void> {
         paymentDelayUnit: "month",
         paymentDelayValue: 1,
         paymentDateBasis: "invoice_period_end",
-        paymentBusinessDayPolicy: "window",
+        paymentBusinessDayPolicy: "payment_window",
         paymentWindowStartDay: 10,
         paymentWindowEndDay: 20,
         deadlineOffsetUnit: "day",

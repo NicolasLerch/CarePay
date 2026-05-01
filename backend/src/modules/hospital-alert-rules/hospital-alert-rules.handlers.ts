@@ -1,6 +1,11 @@
 import type { Request, Response } from "express";
 
 import {
+  sendListSuccess,
+  sendSuccess,
+} from "../../shared/http/responses.js";
+
+import {
   createHospitalAlertRuleSchema,
   hospitalAlertRuleHospitalParamsSchema,
   hospitalAlertRuleParamsSchema,
@@ -19,7 +24,7 @@ export async function listHospitalAlertRules(
   );
   const alertRules = await hospitalAlertRulesService.listByHospital(hospitalId);
 
-  response.status(200).json({ data: alertRules });
+  return sendListSuccess(response, { data: alertRules });
 }
 
 export async function getHospitalAlertRule(
@@ -34,7 +39,7 @@ export async function getHospitalAlertRule(
     alertRuleId,
   );
 
-  response.status(200).json({ data: alertRule });
+  return sendSuccess(response, { data: alertRule });
 }
 
 export async function createHospitalAlertRule(
@@ -47,7 +52,7 @@ export async function createHospitalAlertRule(
   const payload = createHospitalAlertRuleSchema.parse(request.body);
   const alertRule = await hospitalAlertRulesService.create(hospitalId, payload);
 
-  response.status(201).json({ data: alertRule });
+  return sendSuccess(response, { statusCode: 201, data: alertRule });
 }
 
 export async function updateHospitalAlertRule(
@@ -64,7 +69,7 @@ export async function updateHospitalAlertRule(
     payload,
   );
 
-  response.status(200).json({ data: alertRule });
+  return sendSuccess(response, { data: alertRule });
 }
 
 export async function deleteHospitalAlertRule(
@@ -76,6 +81,5 @@ export async function deleteHospitalAlertRule(
   );
   await hospitalAlertRulesService.delete(hospitalId, alertRuleId);
 
-  response.status(204).send();
+  return sendSuccess(response, { data: null });
 }
-

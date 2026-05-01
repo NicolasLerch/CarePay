@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { paymentStatusSchema } from "../../shared/domain/enums.js";
+
 const isoDateTimeSchema = z.string().datetime({ offset: true });
 const decimalStringSchema = z.string().regex(/^\d+(\.\d+)?$/);
 const emptyStringToUndefined = (value: unknown) => {
@@ -22,11 +24,11 @@ export const invoicePaymentParamsSchema = z.object({
 export const listPaymentsQuerySchema = z.object({
   invoiceId: z.uuid().optional(),
   hospitalId: z.uuid().optional(),
-  status: z.string().trim().min(1).max(50).optional(),
+  status: paymentStatusSchema.optional(),
 });
 
 export const upsertPaymentSchema = z.object({
-  status: z.string().trim().min(1).max(50),
+  status: paymentStatusSchema,
   paidAmount: z.preprocess(
     emptyStringToUndefined,
     decimalStringSchema.optional(),
@@ -43,4 +45,3 @@ export const upsertPaymentSchema = z.object({
 
 export type ListPaymentsQuery = z.infer<typeof listPaymentsQuerySchema>;
 export type UpsertPaymentInput = z.infer<typeof upsertPaymentSchema>;
-
